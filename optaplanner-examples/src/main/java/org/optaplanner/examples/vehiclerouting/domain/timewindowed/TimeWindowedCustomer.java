@@ -31,6 +31,18 @@ public class TimeWindowedCustomer extends Customer {
     private long readyTime;
     private long dueTime;
     private long serviceDuration;
+////////
+    private int diaLlegada;
+
+
+    public int getDiaLlegada() {
+        return diaLlegada;
+    }
+
+    public void setDiaLlegada(int diaLlegada) {
+        this.diaLlegada = diaLlegada;
+    }
+    /////////
 
     // Shadow variable
     private Long arrivalTime;

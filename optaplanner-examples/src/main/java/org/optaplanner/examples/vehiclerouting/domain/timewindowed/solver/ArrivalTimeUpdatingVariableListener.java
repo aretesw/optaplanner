@@ -61,24 +61,29 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
         Standstill previousStandstill = sourceCustomer.getPreviousStandstill();
         Long departureTime = (previousStandstill instanceof TimeWindowedCustomer)
                 ? ((TimeWindowedCustomer) previousStandstill).getDepartureTime() : null;
+
+        int diaLlegada = (previousStandstill instanceof TimeWindowedCustomer)
+                ? ((TimeWindowedCustomer) previousStandstill).getDiaLlegada() : 0;
+
+
         TimeWindowedCustomer shadowCustomer = sourceCustomer;
 
-        Long arrivalTime = calculateArrivalTime(shadowCustomer, departureTime);
+        Long arrivalTime = calculateArrivalTime(shadowCustomer, departureTime, diaLlegada);
         while (shadowCustomer != null && ObjectUtils.notEqual(shadowCustomer.getArrivalTime(), arrivalTime)) {
             scoreDirector.beforeVariableChanged(shadowCustomer, "arrivalTime");
             shadowCustomer.setArrivalTime(arrivalTime);
             scoreDirector.afterVariableChanged(shadowCustomer, "arrivalTime");
             departureTime = shadowCustomer.getDepartureTime();
             shadowCustomer = shadowCustomer.getNextCustomer();
-            arrivalTime = calculateArrivalTime(shadowCustomer, departureTime);
+            arrivalTime = calculateArrivalTime(shadowCustomer, departureTime, diaLlegada);
         }
     }
 
-    private Long calculateArrivalTime(TimeWindowedCustomer customer, Long previousDepartureTime) {
+    private Long calculateArrivalTime(TimeWindowedCustomer customer, Long previousDepartureTime, int previousDiaLlegada) {
 
 //    	int range_s = 0;
 //    	int range_e = 0;
-    	
+
 //    	long fecha_inicio_rango = day_s[range_s] + customer.getReadyTime();
 //    	long fecha_fin_rango = day_s[range_e] + customer.getReadyTime();
 
@@ -86,9 +91,9 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
     	long[] day_s = new long[]{0, 1440000, 2880000, 4320000, 5760000, 7200000, 8640000, 12960000, 14400000, 10080000, 11520000, 15840000};
     	long[] day_e = new long[]{1439999, 2879999, 4319999, 5759999, 7199999, 8639999, 10079999, 11519999, 12959999, 14399999, 15839999, 17279999};
 
-    	int dia_llegada = 0;// customer.getPreviousStandstill().dia_llegada()
+    	int dia_llegada =  previousDiaLlegada;
     	long llegada = 0;
-    	
+
     	if (customer == null) {
             return null;
         }
@@ -107,12 +112,12 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
         }
 
         if (llegada > day_s[dia_llegada] + customer.getDueTime()) {
-//customer.setdia_llegada(dia_llegada + 1)
+            customer.setDiaLlegada(dia_llegada + 1);
         	return day_s[dia_llegada + 1] + customer.getReadyTime();
 
         }
         else {
-    		//customer.setdia_llegada(dia_llegada)		
+    		customer.setDiaLlegada(dia_llegada)		;
         	return day_s[dia_llegada] + llegada;
 
         }
