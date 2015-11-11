@@ -79,48 +79,50 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
         }
     }
 
-    private Long calculateArrivalTime(TimeWindowedCustomer customer, Long previousDepartureTime, int previousDiaLlegada) {
+	private Long calculateArrivalTime(TimeWindowedCustomer customer, Long previousDepartureTime,
+			int previousDiaLlegada) {
 
-//    	int range_s = 0;
-//    	int range_e = 0;
+		// int range_s = 0;
+		// int range_e = 0;
 
-//    	long fecha_inicio_rango = day_s[range_s] + customer.getReadyTime();
-//    	long fecha_fin_rango = day_s[range_e] + customer.getReadyTime();
+		// long fecha_inicio_rango = day_s[range_s] + customer.getReadyTime();
+		// long fecha_fin_rango = day_s[range_e] + customer.getReadyTime();
 
+		long[] day_s = new long[] { 0, 1440000, 2880000, 4320000, 5760000, 7200000, 8640000, 12960000, 14400000,
+				10080000, 11520000, 15840000 };
+		//long[] day_e = new long[] { 1439999, 2879999, 4319999, 5759999, 7199999, 8639999, 10079999, 11519999, 12959999,14399999, 15839999, 17279999 };
 
-    	long[] day_s = new long[]{0, 1440000, 2880000, 4320000, 5760000, 7200000, 8640000, 12960000, 14400000, 10080000, 11520000, 15840000};
-    	long[] day_e = new long[]{1439999, 2879999, 4319999, 5759999, 7199999, 8639999, 10079999, 11519999, 12959999, 14399999, 15839999, 17279999};
+		int dia_llegada = previousDiaLlegada;
+		long llegada = 0;
 
-    	int dia_llegada =  previousDiaLlegada;
-    	long llegada = 0;
+		if (customer == null) {
+			return null;
+		}
+		if (previousDepartureTime == null) {
+			// PreviousStandstill is the Vehicle, so we leave from the Depot at
+			// the best suitable time
+			// customer.setdia_llegada(0)
+			long a = customer.getReadyTime();
+			long b = customer.getDistanceFromPreviousStandstill();
+			llegada = Math.max(a, b);
+		} else {
+			llegada = previousDepartureTime + customer.getDistanceFromPreviousStandstill();
+		}
 
-    	if (customer == null) {
-            return null;
-        }
-        if (previousDepartureTime == null) {
-            // PreviousStandstill is the Vehicle, so we leave from the Depot at the best suitable time
+		// aqui va tu metodo que calculara la hora de llegada del siguiente
+		// punto considerando la ventana de entrega del customer.
+		// si la hora de llegada superála ventana de entrega del siguiente
+		// customer, entonces asignará el ready time como hora de llegada y
+		// sumará un dia en la fecha de entraga.
+		if (llegada > day_s[dia_llegada] + customer.getDueTime()) {
+			customer.setDiaLlegada(dia_llegada + 1);
+			return day_s[dia_llegada + 1] + customer.getReadyTime();
 
+		} else {
+			customer.setDiaLlegada(dia_llegada);
+			return day_s[dia_llegada] + llegada;
 
-    		//customer.setdia_llegada(0)
-        	long a = customer.getReadyTime();
-            long b = customer.getDistanceFromPreviousStandstill();
-        	llegada = Math.max(a, b);
-        }
-        else
-        {
-        llegada = previousDepartureTime + customer.getDistanceFromPreviousStandstill();
-        }
-
-        if (llegada > day_s[dia_llegada] + customer.getDueTime()) {
-            customer.setDiaLlegada(dia_llegada + 1);
-        	return day_s[dia_llegada + 1] + customer.getReadyTime();
-
-        }
-        else {
-    		customer.setDiaLlegada(dia_llegada)		;
-        	return day_s[dia_llegada] + llegada;
-
-        }
+		}
     }
 
 }

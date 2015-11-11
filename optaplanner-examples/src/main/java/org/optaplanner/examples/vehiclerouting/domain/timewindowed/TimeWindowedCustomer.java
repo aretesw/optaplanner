@@ -32,30 +32,30 @@ public class TimeWindowedCustomer extends Customer {
     private long dueTime;
     private long serviceDuration;
 ////////
-    private long diaLlegada;
+    private int diaLlegada;
     
-    public long getDiaInicio() {
+    public int getDiaInicio() {
 		return diaInicio;
 	}
 
-	public void setDiaInicio(long diaInicio) {
+	public void setDiaInicio(int diaInicio) {
 		this.diaInicio = diaInicio;
 	}
 
-	public long getDiaFin() {
+	public int getDiaFin() {
 		return diaFin;
 	}
 
-	public void setDiaFin(long diaFin) {
+	public void setDiaFin(int diaFin) {
 		this.diaFin = diaFin;
 	}
 
-	private long diaInicio;
+	private int diaInicio;
     
-    private long diaFin;
+    private int diaFin;
 
 
-    public long getDiaLlegada() {
+    public int getDiaLlegada() {
         return diaLlegada;
     }
 
