@@ -86,26 +86,36 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
 				10080000, 11520000, 15840000 };
 
 		int dia_llegada = previousDiaLlegada;
+		
 		long llegada = 0; // Inicialización llegada
 
 		if (customer == null) {
 			return null;
 		}
+
+		if (dia_llegada < customer.getDiaInicio())
+		{dia_llegada = customer.getDiaInicio();
+		customer.setDiaLlegada(dia_llegada);}
+		
 		if (previousDepartureTime == null) {
 			// PreviousStandstill is the Vehicle, so we leave from the Depot at
 			// the best suitable time
 
 			customer.setDiaLlegada(customer.getDiaInicio());
-			llegada = Math.max(day_s[customer.getDiaInicio()] + customer.getReadyTime(), customer.getDistanceFromPreviousStandstill());
+			long a = day_s[customer.getDiaInicio()] + customer.getReadyTime();
+			long b = customer.getDistanceFromPreviousStandstill();
+			llegada = Math.max(a, b);
 		} else {
 			llegada = previousDepartureTime + customer.getDistanceFromPreviousStandstill();
 		}
 
-		if (llegada > day_s[dia_llegada] + customer.getDueTime()) {
+		long dueTime = day_s[dia_llegada] + customer.getDueTime();
+		if (llegada > dueTime) {
 			customer.setDiaLlegada(dia_llegada + 1);
 			return day_s[dia_llegada + 1] + customer.getReadyTime();
 
-		} else {
+		}
+		else {
 			customer.setDiaLlegada(dia_llegada);
 			return day_s[dia_llegada] + llegada;
 
