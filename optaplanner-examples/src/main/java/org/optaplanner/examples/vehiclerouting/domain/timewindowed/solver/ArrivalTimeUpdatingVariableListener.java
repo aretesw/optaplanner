@@ -74,6 +74,7 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
             shadowCustomer.setArrivalTime(arrivalTime);
             scoreDirector.afterVariableChanged(shadowCustomer, "arrivalTime");
             departureTime = shadowCustomer.getDepartureTime();
+            diaLlegada = shadowCustomer.getDiaLlegada();//////////////////
             shadowCustomer = shadowCustomer.getNextCustomer();
             arrivalTime = calculateArrivalTime(shadowCustomer, departureTime, diaLlegada);
         }
@@ -82,16 +83,14 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
 	private Long calculateArrivalTime(TimeWindowedCustomer customer, Long previousDepartureTime,
 			int previousDiaLlegada) {
 
-		long[] day_s = new long[] { 0, 1440000, 2880000, 4320000, 5760000, 7200000, 8640000, 12960000, 14400000,
-				10080000, 11520000, 15840000 };
-
-
-		
-		long llegada = 0; // Inicialización llegada
-
 		if (customer == null) {
 			return null;
 		}
+		
+		long[] day_s = new long[] { 0, 1440000, 2880000, 4320000, 5760000, 7200000, 8640000, 12960000, 14400000,
+				10080000, 11520000, 15840000 };
+		long llegada = 0; // Inicialización llegada
+
 		
 		if (previousDepartureTime == null) {
 			// PreviousStandstill is the Vehicle, so we leave from the Depot at
@@ -108,32 +107,20 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
 		
 		
 		int dia_llegada = previousDiaLlegada;
-		try
-		{
-			dia_llegada = ((TimeWindowedCustomer) customer.getPreviousStandstill()).getDiaLlegada();
-		}
-		catch (Exception e){
-			
-		}
 
-		if (dia_llegada < customer.getDiaInicio()){
+		if (dia_llegada < customer.getDiaInicio()){ //Si se llega antes del dia en que empieza el rango entonces se mueve al primer momento del rango
 			dia_llegada = customer.getDiaInicio();
 			customer.setDiaLlegada(customer.getDiaInicio());
+			llegada = day_s[dia_llegada] + customer.getReadyTime();
+			return llegada;
 		}
-
 		
 		long dueTime = day_s[dia_llegada] + customer.getDueTime();
 		long readyTime = day_s[dia_llegada] + customer.getReadyTime();
 
-		if (llegada > dueTime) {
+		if (llegada > dueTime) { //Si se llega despues del fin de la ventana entonces se empuja al siguiente dia
 			customer.setDiaLlegada(dia_llegada + 1);
 			llegada = day_s[dia_llegada + 1] + customer.getReadyTime();
-			return llegada;
-
-		}
-		else if (llegada<= readyTime){
-			dia_llegada = customer.getDiaInicio();
-			llegada = day_s[dia_llegada] + customer.getReadyTime();
 			return llegada;
 		}
 		else {
