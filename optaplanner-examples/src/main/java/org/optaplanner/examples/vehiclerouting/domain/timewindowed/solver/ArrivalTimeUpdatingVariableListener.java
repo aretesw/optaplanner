@@ -80,15 +80,17 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
         }
     }
 
+    private long dayS(int i){
+    	return i * 24 * 60 * 1000;
+    }
+    
 	private Long calculateArrivalTime(TimeWindowedCustomer customer, Long previousDepartureTime, int dia_llegada) {
 
 		if (customer == null) {
 			return null;
 		}
-		
-		long[] day_s = new long[] { 0, 1440000, 2880000, 4320000, 5760000, 7200000, 8640000, 12960000, 14400000,
-				10080000, 11520000, 15840000 };
-		long llegada = 0; // Inicialización llegada
+
+		long llegada;
 
 		
 		if (previousDepartureTime == null) {
@@ -96,26 +98,26 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
 			// the best suitable time
 
 			customer.setDiaLlegada(customer.getDiaInicio());
-			long a = day_s[customer.getDiaInicio()] + customer.getReadyTime();
+			long a = dayS(customer.getDiaInicio()) + customer.getReadyTime();
 			long b = customer.getDistanceFromPreviousStandstill();
 			llegada = Math.max(a, b);
 		} else {
 			llegada = previousDepartureTime + customer.getDistanceFromPreviousStandstill();
 		}
 
-		if (dia_llegada < customer.getDiaInicio()){ //Si se llega antes del dia en que empieza el rango entonces se mueve al primer momento del rango
+		if (dia_llegada < customer.getDiaInicio()){
+			//Si se llega antes del dia en que empieza el rango entonces se mueve al primer momento del rango
+			//No se verifica si se llega después porque eso es factibilidad, lo resuelve Drools
+
 			dia_llegada = customer.getDiaInicio();
 			customer.setDiaLlegada(customer.getDiaInicio());
-			llegada = day_s[dia_llegada] + customer.getReadyTime();
+			llegada = dayS(dia_llegada) + customer.getReadyTime();
 			return llegada;
 		}
 		
-		long dueTime = day_s[dia_llegada] + customer.getDueTime();
-		long readyTime = day_s[dia_llegada] + customer.getReadyTime();
-
-		if (llegada > dueTime) { //Si se llega despues del fin de la ventana entonces se empuja al siguiente dia
+		if (llegada > dayS(dia_llegada) + customer.getDueTime()) { //Si se llega despues del fin de la ventana entonces se empuja al siguiente dia
 			customer.setDiaLlegada(dia_llegada + 1);
-			llegada = day_s[dia_llegada + 1] + customer.getReadyTime();
+			llegada = dayS(dia_llegada + 1) + customer.getReadyTime();
 			return llegada;
 		}
 		else {
