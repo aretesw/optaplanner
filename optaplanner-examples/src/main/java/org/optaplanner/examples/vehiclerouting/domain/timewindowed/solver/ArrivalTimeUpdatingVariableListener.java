@@ -93,9 +93,10 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
 			return null;
 		}
 
-		if (dia_llegada < customer.getDiaInicio())
-		{dia_llegada = customer.getDiaInicio();
-		customer.setDiaLlegada(dia_llegada);}
+		if (dia_llegada < customer.getDiaInicio()){
+			dia_llegada = customer.getDiaInicio();
+			customer.setDiaLlegada(customer.getDiaInicio());
+		}
 		
 		if (previousDepartureTime == null) {
 			// PreviousStandstill is the Vehicle, so we leave from the Depot at
