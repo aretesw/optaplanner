@@ -80,8 +80,7 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
         }
     }
 
-	private Long calculateArrivalTime(TimeWindowedCustomer customer, Long previousDepartureTime,
-			int previousDiaLlegada) {
+	private Long calculateArrivalTime(TimeWindowedCustomer customer, Long previousDepartureTime, int dia_llegada) {
 
 		if (customer == null) {
 			return null;
@@ -103,10 +102,6 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
 		} else {
 			llegada = previousDepartureTime + customer.getDistanceFromPreviousStandstill();
 		}
-
-		
-		
-		int dia_llegada = previousDiaLlegada;
 
 		if (dia_llegada < customer.getDiaInicio()){ //Si se llega antes del dia en que empieza el rango entonces se mueve al primer momento del rango
 			dia_llegada = customer.getDiaInicio();
