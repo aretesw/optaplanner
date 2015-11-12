@@ -52,7 +52,7 @@
             <location class="VrpAirLocation" reference="4"/>
             <demand>25</demand>
             <readyTime>480000</readyTime>
-            <dueTime>1380000</dueTime>
+            <dueTime>1440000</dueTime>
             <diaInicio>0</diaInicio>
             <diaFin>0</diaFin>
             <serviceDuration>30000</serviceDuration>
@@ -62,9 +62,9 @@
             <location class="VrpAirLocation" reference="5"/>
             <demand>26</demand>
             <readyTime>480000</readyTime>
-            <dueTime>1380000</dueTime>
-            <diaInicio>2</diaInicio>
-            <diaFin>2</diaFin>
+            <dueTime>1440000</dueTime>
+            <diaInicio>1</diaInicio>
+            <diaFin>1</diaFin>
             <serviceDuration>30000</serviceDuration>
         </VrpTimeWindowedCustomer>
         <VrpTimeWindowedCustomer id="15">
@@ -72,9 +72,9 @@
             <location class="VrpAirLocation" reference="6"/>
             <demand>27</demand>
             <readyTime>480000</readyTime>
-            <dueTime>1380000</dueTime>
+            <dueTime>1440000</dueTime>
             <diaInicio>1</diaInicio>
-            <diaFin>2</diaFin>
+            <diaFin>1</diaFin>
             <serviceDuration>30000</serviceDuration>
         </VrpTimeWindowedCustomer>
     </customerList>

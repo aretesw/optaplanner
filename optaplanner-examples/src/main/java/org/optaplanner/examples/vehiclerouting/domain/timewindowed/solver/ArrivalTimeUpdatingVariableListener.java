@@ -85,17 +85,12 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
 		long[] day_s = new long[] { 0, 1440000, 2880000, 4320000, 5760000, 7200000, 8640000, 12960000, 14400000,
 				10080000, 11520000, 15840000 };
 
-		int dia_llegada = previousDiaLlegada;
+
 		
 		long llegada = 0; // Inicialización llegada
 
 		if (customer == null) {
 			return null;
-		}
-
-		if (dia_llegada < customer.getDiaInicio()){
-			dia_llegada = customer.getDiaInicio();
-			customer.setDiaLlegada(customer.getDiaInicio());
 		}
 		
 		if (previousDepartureTime == null) {
@@ -110,15 +105,40 @@ public class ArrivalTimeUpdatingVariableListener implements VariableListener<Cus
 			llegada = previousDepartureTime + customer.getDistanceFromPreviousStandstill();
 		}
 
+		
+		
+		int dia_llegada = previousDiaLlegada;
+		try
+		{
+			dia_llegada = ((TimeWindowedCustomer) customer.getPreviousStandstill()).getDiaLlegada();
+		}
+		catch (Exception e){
+			
+		}
+
+		if (dia_llegada < customer.getDiaInicio()){
+			dia_llegada = customer.getDiaInicio();
+			customer.setDiaLlegada(customer.getDiaInicio());
+		}
+
+		
 		long dueTime = day_s[dia_llegada] + customer.getDueTime();
+		long readyTime = day_s[dia_llegada] + customer.getReadyTime();
+
 		if (llegada > dueTime) {
 			customer.setDiaLlegada(dia_llegada + 1);
-			return day_s[dia_llegada + 1] + customer.getReadyTime();
+			llegada = day_s[dia_llegada + 1] + customer.getReadyTime();
+			return llegada;
 
+		}
+		else if (llegada<= readyTime){
+			dia_llegada = customer.getDiaInicio();
+			llegada = day_s[dia_llegada] + customer.getReadyTime();
+			return llegada;
 		}
 		else {
 			customer.setDiaLlegada(dia_llegada);
-			return day_s[dia_llegada] + llegada;
+			return llegada;
 
 		}
     }
